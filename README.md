@@ -1,6 +1,10 @@
 # DriveTreeCreator.js
 pretty easy way to create a ton of folder tree from google drive
 
+# License
+![WTFPL](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-1.png)
+
+
 # Example
 ![poster](./poster.png)
 
