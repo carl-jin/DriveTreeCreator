@@ -67,6 +67,7 @@ console.log(data)
 |googleAPI.folderId   | which folder do you want to get from? accept multiple folder Id use ,to segmentation like <br/>`folderIdTest,folderIdTest2,folderIdTest3`    |
 |googleAPI.owner   | the owner of the google folder that's a point of DriveTreeCreator working <br />as we know , we cant get children folder or grandson folder by google drive api, cuz google not provide it<br/>but interestingly we can use the owner parameter to replace it! like `xxx@org`   |
 
+>where i should get the owner?
 ![owner](./owner.png)
 
 ## Methods
