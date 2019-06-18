@@ -1,0 +1,35 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.form {
+  width: 400px;
+  margin: 0 auto;
+  margin-top: 24px;
+
+  .inputBox {
+    margin-top: 16px;
+
+    label {
+      width: 60px;
+      display: inline-block;
+    }
+
+    input {
+      height: 30px;
+      width: 300px;
+    }
+  }
+}
+
+#start {
+  margin-left: 200px;
+  padding: 8px 16px;
+  margin-top: 24px;
+}

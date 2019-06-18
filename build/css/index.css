@@ -1,0 +1,27 @@
+* {
+  margin: 0;
+  padding: 0; }
+
+h1 {
+  text-align: center;
+  margin-top: 24px; }
+
+.form {
+  width: 400px;
+  margin: 0 auto;
+  margin-top: 24px; }
+  .form .inputBox {
+    margin-top: 16px; }
+    .form .inputBox label {
+      width: 60px;
+      display: inline-block; }
+    .form .inputBox input {
+      height: 30px;
+      width: 300px; }
+
+#start {
+  margin-left: 200px;
+  padding: 8px 16px;
+  margin-top: 24px; }
+
+/*# sourceMappingURL=index.css.map */
