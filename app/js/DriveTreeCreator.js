@@ -35,9 +35,7 @@ class DriveTreeCreator {
       discovery_docs: ["https://script.googleapis.com/$discovery/rest?version=v1"],
       //  list files except trash file
       inTrash: false,
-      //  google drive api list parameter ---- files
-      //  https://developers.google.com/drive/api/v3/search-files
-      files: `id,name,size,createdTime,webContentLink,webViewLink,mimeType,parents,fileExtension`,
+      // files: `id,title,fileSize,createdDate,webContentLink,embedLink,mimeType,parents,fileExtension,downloadUrl`,
       //  google drive api list parameter
       //  https://developers.google.com/drive/api/v3/reference/files/list
       includeTeamDriveItems: false,
@@ -82,6 +80,8 @@ class DriveTreeCreator {
   _event () {
     //  user sign in state change
     window.gapi.auth2.getAuthInstance().isSignedIn.listen(isSignedIn => this._emitEvent('signInStateChange', {state: isSignedIn}))
+    
+    this._emitEvent('signInStateChange', {state: this.isSignIn()})
   }
   
   /**
@@ -117,7 +117,7 @@ class DriveTreeCreator {
    * 3. sort
    * 4. return specific folder from folderId parameter
    */
-  start () {
+  start (cache = false) {
     if (!this.isSignIn()) {
       throw new Error('cant run start method, should sign-in first')
     }
@@ -127,12 +127,14 @@ class DriveTreeCreator {
       //  get all files by owners user
       this._emitEvent('loadProcess', {process: 'start', count: 0})
       let files = []
-      if (window.location.href.indexOf('localhost') && false) {
+      if (cache) {
         let cache = window.localStorage.getItem('filesCache')
         if (window.localStorage.getItem('filesCache')) {
           files = JSON.parse(cache)
         } else {
           files = await this._getAllFilesUnderRootFolder()
+          //  data clean
+          files = this._cleanFiles(files)
           window.localStorage.setItem('filesCache', JSON.stringify(files))
         }
       } else {
@@ -145,9 +147,9 @@ class DriveTreeCreator {
       
       //  step 3
       //  sort
-      if (!~this.options.files.indexOf('name')) {
-        throw new Error('should include `name` field in options.files')
-      }
+      // if (!~this.options.files.indexOf('name')) {
+      //   throw new Error('should include `name` field in options.files')
+      // }
       
       Object.keys(dir).map(key => {
         this._sort(dir[key])
@@ -162,6 +164,32 @@ class DriveTreeCreator {
       this.options.googleAPI.folderId.split(',').map(id => result.push(this._returnSpecificFolder(dir, id)))
       res(result)
     })
+  }
+  
+  /**
+   * data clean
+   * @param files
+   * @private
+   */
+  _cleanFiles(files){
+    for(let i = 0;i<files.length;i++){
+      let parents = []
+      files[i].parents.map(item=>parents.push(item.id))
+      
+      files[i] = {
+        id:files[i].id,
+        name:files[i].title,
+        size:files[i].fileSize,
+        createdTime:files[i].createdDate,
+        webContentLink:files[i].webContentLink,
+        webViewLink:files[i].embedLink,
+        mimeType:files[i].mimeType,
+        parents:parents,
+        fileExtension:files[i].fileExtension,
+        downloadUrl:files[i].downloadUrl,
+      }
+    }
+    return files
   }
   
   /**
@@ -275,16 +303,16 @@ class DriveTreeCreator {
   _getAllFilesUnderRootFolder (nextPageToken = '', data = [], count = 1) {
     return new Promise(res => {
       window.gapi.client.drive.files.list({
-        pageSize: 1000,
+        maxResults: 1000,
         pageToken: nextPageToken,
-        spaces: 'drive',
+        spaces:'drive',
         q: `'${this.options.googleAPI.owner}' in owners and trashed = ${this.options.inTrash.toString()}`,
-        fields: `nextPageToken, files(${this.options.files})`,
+        // fields: `nextPageToken, files(${this.options.files})`,
         includeTeamDriveItems: this.options.includeTeamDriveItems
       }).then(result => {
-        data = data.concat(result.result.files)
+        data = data.concat(result.result.items)
         //  emit event
-        this._emitEvent('loadProcess', {process: count, count: result.result.files.length})
+        this._emitEvent('loadProcess', {process: count, count: result.result.items.length})
         count++
         if (result.result.nextPageToken) {
           res(this._getAllFilesUnderRootFolder(result.result.nextPageToken, data, count))
@@ -376,7 +404,7 @@ class DriveTreeCreator {
     return new Promise(async res => {
       await this._loadScript('https://apis.google.com/js/api.js')
       window.gapi.load('client:auth2', () => {
-        window.gapi.client.load('drive', 'v3', async () => {
+        window.gapi.client.load('drive', 'v2', async () => {
           await window.gapi.client.init({
             apiKey: this.options.googleAPI.apiKey,
             clientId: this.options.googleAPI.clientId,
@@ -407,5 +435,3 @@ class DriveTreeCreator {
   }
   
 }
-
-export default DriveTreeCreator
