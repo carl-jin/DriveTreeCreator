@@ -2,7 +2,7 @@
  * --------------------------------------------------------------------------
  * DriveTreeCreator.js
  * @description pretty easy way to create a ton of folder tree from google drive
- * @version 0.0.1
+ * @version 0.2.1
  * @license WTFPL
  * @author BUFF
  * --------------------------------------------------------------------------
@@ -148,6 +148,7 @@ class DriveTreeCreator {
         }
       } else {
         files = await this._getAllFilesUnderRootFolder();
+        files = this._cleanFiles(files);
       }
 
       //   step 2
