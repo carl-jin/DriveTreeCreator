@@ -12,7 +12,7 @@ pretty easy way to create a ton of folder tree from google drive
 not have yet
 
 # Usage
-[actually i written a post about compares to 3 ways to get google drive tree structure](https://carljin.com/list-all-google-drive-files-and-folders.html)
+[actually i wrote a post about compares to 3 ways to get google drive tree structure](https://carljin.com/list-all-google-drive-files-and-folders.html)
 
 ```javascript
 //  all code use ES6
